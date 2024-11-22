@@ -1,0 +1,21 @@
+{
+    "manifest_version": 3,
+    "name": "SoundFlow",
+    "description": "Automatically pauses playing browser soundtracks when a new one starts",
+    "version": "1.0.0",
+    "permissions": [ "storage", "tabs", "activeTab" ],
+    "background": {
+      "service_worker": "background.js"
+    },
+    "content_scripts": [
+      {
+        "matches": ["<all_urls>"],
+        "js": ["audioDetectScript.js"],
+        "run_at": "document_end"
+      }
+    ],
+    "action": {
+      "default_popup": "/popup/soundflow.html",
+      "default_icon": "assets/soundflow.png"
+    }
+}
