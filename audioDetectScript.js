@@ -12,6 +12,20 @@ document.querySelector('video').addEventListener('playing', (event) => {
     });
 });
 
+document.querySelector('video').addEventListener('pause', (event) => {
+    let audio = event.target;
+    console.log({
+        "action": "audio paused",
+        "tag": audio.tagName,
+        "tagId": audio.id ?? null
+    });
+    chrome.runtime.sendMessage({
+        "action": "audio paused",
+        "tag": audio.tagName,
+        "tagId": audio.id ?? null
+    });
+});
+
 chrome.runtime.onMessage.addListener( (message) => {
     if(message.action === "pause") {
         if(!message.id) {
@@ -21,4 +35,12 @@ chrome.runtime.onMessage.addListener( (message) => {
             document.querySelector(message.id).pause();            
         }
     }
-})
+    else if (message.action === 'play') {
+        if(!message.id) {
+            document.querySelector(message.tag).play();
+        }
+        else {
+            document.querySelector(message.id).play();            
+        }
+    }
+});

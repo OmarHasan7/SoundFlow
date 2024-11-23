@@ -1,5 +1,29 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link rel="stylesheet" href="pop.css">
+        <script src="pop.js"></script>
+        <title>SoundFlow</title>
+    </head>
     <body>
-        <h1>Sound Flow</h1>
+        <h1>SoundFlow</h1>
+        <form style="margin-bottom: 1rem;">
+            <label id="disabled-input" class="switch">
+                <input id="disabled-switch" disabled type="checkbox">
+                <span class="slider round disabled-slider">
+                    <h2 style="text-align: unset;margin-left: 0.3rem;color: #1d1d1d">Always On</h2>
+                </span>
+            </label>
+            <span style="color:rgb(211, 211, 211)" id="switch-text">On play: pause previously playing audio</span>
+        </form>
+        <form>
+            <label class="switch">
+                <input id="input-switch" type="checkbox">
+                <span class="slider round">
+                    <h2 id="light-text">OFF</h2>
+                </span>
+            </label>
+            <span id="switch-text">On pause: auto play previous audio</span>
+        </form>
     </body>
 </html>
