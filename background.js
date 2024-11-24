@@ -1,6 +1,7 @@
 let previous = null;
 let current = null;
 
+
 chrome.runtime.onMessage.addListener(
     (message, sender) => {
         if(previous === null) {
@@ -33,28 +34,46 @@ chrome.runtime.onMessage.addListener(
                         console.table([previous, current]);
                     }
             }
-            else if(message.action === "audio paused" && current) {
+            else if(message.action === "audio paused" && current && sender.tab.id === current.tabId) {
                 // if(sender.tab.id !== current.tabId) {
                 //     current = {"tabId": sender.tab.id, "tag": message.tag, "id": message.tagId};
                 // }
-                if(sender.tab.id === current.tabId) {
-                    chrome.tabs.sendMessage( previous.tabId, {
-                        "action": "play",
-                        "tag": previous.tag,
-                        "id": previous.id,
-                    });
-                    let tmp = current;
-                    current = previous;
-                    previous = tmp;
-                    console.table([previous, current]);
-                }
+                playPausedVid();
             }
         }
     }
 );
 
+async function playPausedVid()
+{
+    let playOnpause = await getDataFromStorage("playOnpause");
+    console.log(playOnpause);
 
-
+    if(playOnpause) {
+        chrome.tabs.sendMessage( previous.tabId, {
+            "action": "play",
+            "tag": previous.tag,
+            "id": previous.id,
+        });
+        let tmp = current;
+        current = previous;
+        previous = tmp;
+        console.table([previous, current]);
+    }
+}
+function getDataFromStorage(key) 
+{
+    return new Promise((resolve, reject) => {
+        chrome.storage.sync.get(key, function(result) {
+            if (chrome.runtime.lastError) {
+                 reject(false); 
+            }
+            else {
+                 resolve(result[key]);
+            }
+        });
+    });
+}
 
 
 

@@ -5,12 +5,19 @@
     "version": "1.0.0",
     "permissions": [ "storage", "tabs", "activeTab" ],
     "background": {
-      "service_worker": "background.js"
+      "service_worker": "background.js",
+      "type": "module"
     },
     "content_scripts": [
       {
         "matches": ["<all_urls>"],
         "js": ["audioDetectScript.js"],
+        "run_at": "document_end",
+        "exclude_matches": ["https://mp3quran.net/*", "https://www.facebook.com/*"]
+      },
+      {
+        "matches": ["https://www.facebook.com/*"],
+        "js": ["facebookScript.js"],
         "run_at": "document_end"
       }
     ],
