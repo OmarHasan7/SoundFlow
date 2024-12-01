@@ -4,6 +4,7 @@ let current = null;
 
 chrome.runtime.onMessage.addListener(
     (message, sender) => {
+        console.log(sender.url);
         if(previous === null) {
             previous = {
                 "tabId": sender.tab.id,
@@ -15,10 +16,10 @@ chrome.runtime.onMessage.addListener(
         else if(previous) {
             if(message.action === "audio detected") {
                     if(current && sender.tab.id !== current.tabId) {
-                        chrome.tabs.sendMessage( current.tabId, {
+                            chrome.tabs.sendMessage( current.tabId, {
                             "action": "pause",
                             "tag": current.tag,
-                            "id": current.id
+                            "id": current.id,
                         });
                         previous = current;
                         current = {"tabId": sender.tab.id, "tag": message.tag, "id": message.tagId,};
