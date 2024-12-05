@@ -13,11 +13,21 @@
         "matches": ["<all_urls>"],
         "js": ["scripts/audioDetectScript.js"],
         "run_at": "document_end",
-        "exclude_matches": ["https://mp3quran.net/*", "https://www.facebook.com/*", "https://x.com/*", "https://www.instagram.com/*", "https://www.tiktok.com/*", "https://*.snapchat.com/*"]
+        "exclude_matches": ["https://mp3quran.net/*", "https://www.facebook.com/*", "https://x.com/*", "https://www.instagram.com/*", "https://www.tiktok.com/*", "https://*.snapchat.com/*", "https://open.spotify.com/*", "https://play.anghami.com/*"]
       },
       {
-        "matches": ["https://www.facebook.com/*", "https://x.com/*", "https://www.instagram.com/*", "https://www.tiktok.com/*"],
+        "matches": ["https://www.facebook.com/*", "https://x.com/*", "https://www.instagram.com/*"],
         "js": ["/scripts/x_face_instagramScript.js"],
+        "run_at": "document_end"
+      },
+      {
+        "matches": ["https://www.tiktok.com/*"],
+        "js": ["/scripts/tiktokScript.js"],
+        "run_at": "document_end"
+      },
+      {
+        "matches": ["https://play.anghami.com/*"],
+        "js": ["/scripts/anghamiScript.js"],
         "run_at": "document_end"
       },
       {

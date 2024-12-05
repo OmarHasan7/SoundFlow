@@ -3,15 +3,19 @@ let current = null;
 
 
 chrome.runtime.onMessage.addListener(
-    (message, sender) => {
+    async (message, sender) => {
+        previous = await getDataFromStorageLocal('previous')?? null;
+        current = await getDataFromStorageLocal('current')?? null;    
         console.log(sender.url);
+        console.table([previous, current]);
         if(previous === null) {
-            previous = {
-                "tabId": sender.tab.id,
-                "tag": message.tag,
-                "id": message.tagId,
-            };
-            console.table([previous, current]);
+            chrome.storage.local.set({
+                'previous': {
+                    "tabId": sender.tab.id,
+                    "tag": message.tag,
+                    "id": message.tagId,                        
+                }
+            });
         }
         else if(previous) {
             if(message.action === "audio detected") {
@@ -21,33 +25,52 @@ chrome.runtime.onMessage.addListener(
                             "tag": current.tag,
                             "id": current.id,
                         });
-                        previous = current;
-                        current = {"tabId": sender.tab.id, "tag": message.tag, "id": message.tagId,};
-                        console.table([previous, current]);
+                        chrome.storage.local.set({
+                            "previous": current,
+                            "current": {"tabId": sender.tab.id, "tag": message.tag, "id": message.tagId,}
+                        }, () => {
+                            chrome.storage.local.get(['previous', 'current'], (result) => {
+                                console.table(result);
+                            });
+                        });
                     }
                     else if(current === null && previous.tabId !== sender.tab.id) {
-                            chrome.tabs.sendMessage( previous.tabId, {
+                        chrome.tabs.sendMessage( previous.tabId, {
                             "action": "pause",
                             "tag": previous.tag,
                             "id": previous.id
-                            });
-                        current = {"tabId": sender.tab.id, "tag": message.tag, "id": message.tagId,};    
-                        console.table([previous, current]);
+                        });
+                        chrome.storage.local.set({"current": {"tabId": sender.tab.id, "tag": message.tag, "id": message.tagId,}},
+                            () => {
+                                chrome.storage.local.get(['current'], (result) => {
+                                    console.table('Saved data:', result);
+                                });
+                            }
+                        );
                     }
             }
             else if(message.action === "audio paused" && current && sender.tab.id === current.tabId) {
-                // if(sender.tab.id !== current.tabId) {
-                //     current = {"tabId": sender.tab.id, "tag": message.tag, "id": message.tagId};
-                // }
                 playPausedVid();
             }
         }
     }
 );
 
+chrome.tabs.onRemoved.addListener(async (tabId) => {
+    previous = await getDataFromStorageLocal('previous')?? null;
+    current = await getDataFromStorageLocal('current')?? null;
+    if(tabId === current.tabId) {
+        playPausedVid();
+    }
+});
+
+
+
+
+
 async function playPausedVid()
 {
-    let playOnpause = await getDataFromStorage("playOnpause");
+    let playOnpause = await getDataFromStorageSync("playOnpause");
     console.log(playOnpause);
 
     if(playOnpause) {
@@ -57,12 +80,15 @@ async function playPausedVid()
             "id": previous.id,
         });
         let tmp = current;
-        current = previous;
-        previous = tmp;
-        console.table([previous, current]);
+        chrome.storage.local.set({
+            "current": previous,
+            "previous": tmp
+        }, (data) => {
+            console.table(data);
+        });
     }
 }
-function getDataFromStorage(key) 
+function getDataFromStorageSync(key) 
 {
     return new Promise((resolve, reject) => {
         chrome.storage.sync.get(key, function(result) {
@@ -75,42 +101,17 @@ function getDataFromStorage(key)
         });
     });
 }
+function getDataFromStorageLocal(key)
+{
+    return new Promise((resolve, reject) => {
+        chrome.storage.local.get(key, function(result) {
+            if (chrome.runtime.lastError) {
+                 reject(false); 
+            }
+            else {
+                 resolve(result[key]);
+            }
+        });
+    });
+}
 
-
-
-
-
-
-                // if (message.action === "audio detected" && previous && previous.tabId !== sender.tab.id) {
-        //     chrome.tabs.sendMessage( previous.tabId, {
-        //         "action": "pause",
-        //         "tag": previous.tag,
-        //         "id": previous.id
-        //     });
-        //     current = {
-        //         "tabId": sender.tab.id,
-        //         "tag": message.tag,
-        //         "id": message.tagId,
-        //     }
-        // }
-        // // else if(message.action === "audio paused" && previous && sender.tab.id !== current.tabId) {
-        // //     chrome.tabs.sendMessage( previous.tabId, {
-        // //         "action": "play",
-        // //         "tag": previous.tag,
-        // //         "id": previous.id
-        // //     });
-        // // }
-        // if(previous === null) {
-        //     previous = {
-        //         "tabId": sender.tab.id,
-        //         "tag": message.tag,
-        //         "id": message.tagId,
-        //     };
-        // }
-        // else {
-        //     current = {
-        //         "tabId": sender.tab.id,
-        //         "tag": message.tag,
-        //         "id": message.tagId,
-        //     };
-        // }
