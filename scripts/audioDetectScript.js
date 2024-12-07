@@ -1,30 +1,11 @@
-document.querySelector('video').addEventListener('playing', (event) => {
-    let audio = event.target;
-    console.log({
-        "action": "audio detected",
-        "tag": audio.tagName,
-        "tagId": audio.id ?? null
-    });
-    chrome.runtime.sendMessage({
-        "action": "audio detected",
-        "tag": audio.tagName,
-        "tagId": audio.id ?? null
-    });
+Listeners();
+
+document.addEventListener('yt-navigate-finish', () => {
+    Listeners();
+    console.log((window.location.href).includes('https://www.youtube.com/watch'), window.location.href);
 });
 
-document.querySelector('video').addEventListener('pause', (event) => {
-    let audio = event.target;
-    console.log({
-        "action": "audio paused",
-        "tag": audio.tagName,
-        "tagId": audio.id ?? null
-    });
-    chrome.runtime.sendMessage({
-        "action": "audio paused",
-        "tag": audio.tagName,
-        "tagId": audio.id ?? null
-    });
-});
+
 
 chrome.runtime.onMessage.addListener( (message) => {
     if(message.action === "pause") {
@@ -44,3 +25,37 @@ chrome.runtime.onMessage.addListener( (message) => {
         }
     }
 });
+
+
+function Listeners()
+{
+    if((window.location.href).includes('https://www.youtube.com/watch')) {
+        document.querySelector('video').addEventListener('playing', (event) => {
+            let audio = event.target;
+            console.log({
+                "action": "audio detected",
+                "tag": audio.tagName,
+                "tagId": audio.id ?? null
+            });
+            chrome.runtime.sendMessage({
+                "action": "audio detected",
+                "tag": audio.tagName,
+                "tagId": audio.id ?? null
+            });
+        });
+        
+        document.querySelector('video').addEventListener('pause', (event) => {
+            let audio = event.target;
+            console.log({
+                "action": "audio paused",
+                "tag": audio.tagName,
+                "tagId": audio.id ?? null
+            });
+            chrome.runtime.sendMessage({
+                "action": "audio paused",
+                "tag": audio.tagName,
+                "tagId": audio.id ?? null
+            });
+        });        
+    }
+}

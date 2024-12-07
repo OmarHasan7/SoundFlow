@@ -10,10 +10,9 @@
     },
     "content_scripts": [
       {
-        "matches": ["<all_urls>"],
+        "matches": ["https://www.youtube.com/*"],
         "js": ["scripts/audioDetectScript.js"],
-        "run_at": "document_end",
-        "exclude_matches": ["https://mp3quran.net/*", "https://www.facebook.com/*", "https://x.com/*", "https://www.instagram.com/*", "https://www.tiktok.com/*", "https://*.snapchat.com/*", "https://open.spotify.com/*", "https://play.anghami.com/*"]
+        "run_at": "document_end"
       },
       {
         "matches": ["https://www.facebook.com/*", "https://x.com/*", "https://www.instagram.com/*"],
