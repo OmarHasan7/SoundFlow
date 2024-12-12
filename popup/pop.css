@@ -14,14 +14,20 @@ form {
     width: 25rem;
     margin: auto;
     padding-inline: 1rem;
-    align-items: center;
+    padding-top: 0.5rem;
+    /* align-items: center; */
     flex-shrink: 0;
     gap: 1rem;
 }
 #switch-text {
+    width: 18.5rem;
+    line-height: 1.4rem;
     color: white;
     font-size: 1rem;
     flex-grow: 1;
+}
+#note {
+    font-size: 0.875rem;
 }
 
 h2 {
@@ -107,6 +113,14 @@ input:disabled + .slider:before {
     background-color: ;
 }
 
+
+footer {
+    position: fixed;
+    top: 92%;
+    left: 88%;
+    color: #ffffffc7;
+    font-size: 0.75rem;
+}
 
 /* color scheme */
 /* --text: #ecf5f6;

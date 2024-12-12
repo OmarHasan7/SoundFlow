@@ -1,25 +1,27 @@
 let previous = null;
 let current = null;
 
+const messageQueue = [];
 
-chrome.runtime.onMessage.addListener(
-    async (message, sender) => {
+
+async function QueueHandler()
+{
+    while(messageQueue.length > 0) {
         previous = await getDataFromStorageLocal('previous')?? null;
-        current = await getDataFromStorageLocal('current')?? null;    
-        console.log(sender.url);
-        console.table([previous, current]);
+        current = await getDataFromStorageLocal('current')?? null;
+        let playOnpause = await getDataFromStorageSync("playOnpause"); 
         if(previous === null) {
             chrome.storage.local.set({
                 'previous': {
-                    "tabId": sender.tab.id,
-                    "tag": message.tag,
-                    "id": message.tagId,                        
+                    "tabId": messageQueue[0].sender.tab.id,
+                    "tag": messageQueue[0].message.tag,
+                    "id": messageQueue[0].message.tagId,                        
                 }
             });
         }
         else if(previous) {
-            if(message.action === "audio detected") {
-                    if(current && sender.tab.id !== current.tabId) {
+            if(messageQueue[0].message.action === "audio detected") {
+                    if(current && messageQueue[0].sender.tab.id !== current.tabId) {
                             chrome.tabs.sendMessage( current.tabId, {
                             "action": "pause",
                             "tag": current.tag,
@@ -27,40 +29,45 @@ chrome.runtime.onMessage.addListener(
                         });
                         chrome.storage.local.set({
                             "previous": current,
-                            "current": {"tabId": sender.tab.id, "tag": message.tag, "id": message.tagId,}
-                        }, () => {
-                            chrome.storage.local.get(['previous', 'current'], (result) => {
-                                console.table(result);
-                            });
+                            "current": {"tabId": messageQueue[0].sender.tab.id, "tag": messageQueue[0].message.tag, "id": messageQueue[0].message.tagId,}
                         });
                     }
-                    else if(current === null && previous.tabId !== sender.tab.id) {
+                    else if(current === null && previous.tabId !== messageQueue[0].sender.tab.id) {
                         chrome.tabs.sendMessage( previous.tabId, {
                             "action": "pause",
                             "tag": previous.tag,
                             "id": previous.id
                         });
-                        chrome.storage.local.set({"current": {"tabId": sender.tab.id, "tag": message.tag, "id": message.tagId,}},
-                            () => {
-                                chrome.storage.local.get(['current'], (result) => {
-                                    console.table('Saved data:', result);
-                                });
-                            }
-                        );
+                        chrome.storage.local.set({"current": {"tabId": messageQueue[0].sender.tab.id, "tag": messageQueue[0].message.tag, "id": messageQueue[0].message.tagId,}});
                     }
             }
-            else if(message.action === "audio paused" && current && sender.tab.id === current.tabId) {
-                playPausedVid();
+            else if(messageQueue[0].message.action === "audio paused" && current && messageQueue[0].sender.tab.id === current.tabId) {
+                playPausedVid(playOnpause);
             }
         }
+        messageQueue.shift();
+    }
+}
+
+
+
+
+
+
+chrome.runtime.onMessage.addListener(
+    async (message, sender) => {
+        // append to queue
+        messageQueue.push({"message": message, "sender": sender});
+        QueueHandler();
     }
 );
 
 chrome.tabs.onRemoved.addListener(async (tabId) => {
     previous = await getDataFromStorageLocal('previous')?? null;
     current = await getDataFromStorageLocal('current')?? null;
+    let playOnpause = await getDataFromStorageSync("playOnpause"); 
     if(tabId === current.tabId) {
-        playPausedVid();
+        playPausedVid(playOnpause);
     }
 });
 
@@ -68,10 +75,8 @@ chrome.tabs.onRemoved.addListener(async (tabId) => {
 
 
 
-async function playPausedVid()
+async function playPausedVid(playOnpause)
 {
-    let playOnpause = await getDataFromStorageSync("playOnpause");
-    console.log(playOnpause);
 
     if(playOnpause) {
         chrome.tabs.sendMessage( previous.tabId, {
@@ -83,8 +88,6 @@ async function playPausedVid()
         chrome.storage.local.set({
             "current": previous,
             "previous": tmp
-        }, (data) => {
-            console.table(data);
         });
     }
 }

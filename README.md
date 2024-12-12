@@ -1,19 +1,18 @@
 # SoundFlow
 
-**SoundFlow** is a Chrome extension that automatically pauses currently playing browser soundtracks when the user starts another track. This ensures a seamless audio experience by preventing multiple audio tracks from playing simultaneously.
+**SoundFlow** is a Chrome extension that automatically pauses currently playing browser media tab when the user starts playing media in another tab. This ensures a seamless audio experience by preventing multiple audio tracks from playing simultaneously.
 
 ## Features
 - Automatically detects and pauses playing soundtracks.
-- Resumes paused tracks when the new track stops.
+- Resumes paused tracks when the new track stops (optional).
 - Simple and intuitive interface.
 
+---
 <!-- ## Installation
 
 1. **Add SoundFlow from the Chrome Web Store:**
    - Go to the [Chrome Web Store](https://chrome.google.com/webstore/category/extensions) and search for "SoundFlow".
    - Click "Add to Chrome" to install the extension. -->
-## State
-**still under development**
 <!-- ## Usage
 
 1. Once installed, the extension runs in the background.
@@ -26,7 +25,7 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ---
 
-<!-- **Enjoy seamless audio management with SoundFlow!**
+**Enjoy seamless audio management with SoundFlow!**
 
 If you have any questions, feel free to reach out to us.
 
@@ -35,5 +34,5 @@ If you have any questions, feel free to reach out to us.
 ### Contact
 
 - **Author**: Omar Hasan
-- **Email**: [your-email@example.com](mailto:your-email@example.com)
-- **GitHub**: [yourusername](https://github.com/yourusername) -->
+- **Email**: [omar.hasan.im@gmail.com](mailto:omar.hasan.im@gmail.com)
+- **GitHub**: [OmarHasan7](https://github.com/OmarHasan7)
