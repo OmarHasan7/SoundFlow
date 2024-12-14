@@ -10,7 +10,6 @@ window.addEventListener('load', () => {
 });
 document.addEventListener('DOMContentLoaded', () => {    
     document.querySelector('#input-switch').addEventListener('click', (e) => {
-        console.log(e.target.checked)
         changeText(e.target);
         chrome.storage.sync.set({"playOnpause": e.target.checked}, () => {
             chrome.storage.sync.get(["playOnpause"], (result) => console.log(result));

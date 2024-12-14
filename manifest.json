@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "SoundFlow",
-    "description": "Automatically pauses playing media tab when a new one starts playing",
+    "description": "Automatically pause playing media tab when a new one starts playing & optionally resume previous media when current is paused.",
     "version": "1.0.0",
     "permissions": [ "storage", "tabs" ],
     "background": {
