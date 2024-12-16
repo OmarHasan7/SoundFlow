@@ -3,7 +3,7 @@
     "name": "SoundFlow",
     "description": "Automatically pause playing media tab when a new one starts playing & optionally resume previous media when current is paused.",
     "version": "1.0.0",
-    "permissions": [ "storage", "tabs" ],
+    "permissions": [ "storage" ],
     "background": {
       "service_worker": "background.js",
       "type": "module"
